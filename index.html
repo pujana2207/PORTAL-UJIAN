@@ -529,6 +529,11 @@
           <i class="fas fa-sync-alt"></i>
           <span id="last-sync" class="text-sm">Belum disinkron</span>
         </div>
+        <!-- Added Back to Menu Button -->
+        <a href="https://pujana2207.github.io/LANDING-PAGE-SUMATIF-SPENSADA/" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-all flex items-center space-x-2">
+          <i class="fas fa-arrow-left"></i>
+          <span>Kembali ke Menu</span>
+        </a>
       </div>
     </div>
   </header>
@@ -905,456 +910,456 @@
         button.className = 'filter-btn bg-blue-100 text-blue-800 px-3 py-1 md:px-4 md:py-2 rounded-lg hover:bg-blue-200 hover:shadow-md transition-all';
         button.textContent = ruangan;
         button.onclick = () => {
-          // Remove active class from all buttons
-          document.querySelectorAll('#ruanganButtonsContainer button').forEach(btn => {
-            btn.classList.remove('active');
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('bg-blue-100', 'text-blue-800');
-          });
-          
-          // Add active class to clicked button
-          button.classList.add('active');
-          button.classList.add('bg-blue-600', 'text-white');
-          button.classList.remove('bg-blue-100', 'text-blue-800');
-          
-          selectedRuangan = ruangan;
-          filterByRuangan(ruangan, data);
-        };
-        ruanganButtonsContainer.appendChild(button);
-      });
-    }
-
-    function createClassButtons(data) {
-      const classSet = new Set();
-      data.forEach(item => {
-        if (item.kelas && item.kelas !== '#N/A') {
-          classSet.add(item.kelas);
-        }
-      });
-
-      const classSelectorGroup = document.getElementById('classSelectorGroup');
-      const classButtonsContainer = document.getElementById('classButtonsContainer');
-      classSelectorGroup.style.display = 'block';
-      classButtonsContainer.innerHTML = '';
-
-      // Sort classes numerically (VII A, VII B, VIII A, etc.)
-      const sortedClasses = Array.from(classSet).sort((a, b) => {
-        // Extract grade and class letter
-        const gradeA = parseInt(a.split(' ')[0].replace(/\D/g, ''));
-        const gradeB = parseInt(b.split(' ')[0].replace(/\D/g, ''));
-        if (gradeA !== gradeB) return gradeA - gradeB;
-        return a.localeCompare(b);
-      });
-
-      sortedClasses.forEach(kelas => {
-        const button = document.createElement('button');
-        button.className = 'class-selector-btn bg-gray-100 text-gray-800 px-2 py-1 md:px-3 md:py-1 rounded-lg hover:bg-gray-200 hover:shadow-md transition-all';
-        button.textContent = kelas;
-        button.onclick = () => {
-          // Remove active class from all buttons
-          document.querySelectorAll('#classButtonsContainer button').forEach(btn => {
-            btn.classList.remove('active');
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('bg-gray-100', 'text-gray-800');
-          });
-          
-          // Add active class to clicked button
-          button.classList.add('active');
-          button.classList.add('bg-blue-600', 'text-white');
-          button.classList.remove('bg-gray-100', 'text-gray-800');
-          
-          selectedKelas = kelas;
-          filterByClass(kelas, data);
-        };
-        classButtonsContainer.appendChild(button);
-      });
-    }
-
-    function filterByRuangan(ruangan, data) {
-      const filteredData = data.filter(item => item.ruangan === ruangan && item.nama && item.nama !== '#N/A');
-      filteredData.sort((a, b) => {
-        if (a.kelas !== b.kelas) return a.kelas.localeCompare(b.kelas);
-        return a.nama.localeCompare(b.nama);
-      });
-      tampilkanTabel(filteredData);
-      updateTotalParticipants(filteredData);
-      document.getElementById('classReport').style.display = 'none';
-    }
-
-    function filterByClass(kelas, data) {
-      const filteredData = data.filter(item => item.kelas === kelas && item.nama && item.nama !== '#N/A');
-      filteredData.sort((a, b) => a.nama.localeCompare(b.nama));
-      tampilkanTabel(filteredData);
-      updateClassStatistics(filteredData, kelas);
-      document.getElementById('totalParticipants').style.display = 'none';
-      document.getElementById('classReport').style.display = 'block';
-    }
-
-    function updateSubjectStatistics(data, mapel) {
-      const subjectStatsContainer = document.getElementById('subjectStatsContainer');
-      const selectedSubjectTitle = document.getElementById('selectedSubjectTitle');
-      
-      selectedSubjectTitle.textContent = mapel;
-      
-      // Filter data for selected subject
-      const subjectData = data.filter(item => item.mapel === mapel && item.nama && item.nama !== '#N/A' && item.nilai && item.nilai !== '#N/A');
-      
-      // Calculate statistics
-      const totalStudents = subjectData.length;
-      const nilaiArray = subjectData.map(item => parseFloat(item.nilai)).filter(n => !isNaN(n));
-      const avg = nilaiArray.length > 0 ? (nilaiArray.reduce((a, b) => a + b, 0) / nilaiArray.length).toFixed(2) : 0;
-      const max = nilaiArray.length > 0 ? Math.max(...nilaiArray).toFixed(2) : 0;
-      const min = nilaiArray.length > 0 ? Math.min(...nilaiArray).toFixed(2) : 0;
-      
-      subjectStatsContainer.innerHTML = `
-        <div class="bg-white p-4 rounded-lg shadow">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-gray-500 font-medium">Rata-rata Nilai</h3>
-            <span class="stat-badge subject-avg">
-              <i class="fas fa-calculator mr-1"></i> AVG
-            </span>
-          </div>
-          <div class="text-2xl md:text-3xl font-bold text-purple-600">${avg}</div>
-          <div class="text-sm text-gray-500 mt-2">Nilai rata-rata mapel</div>
-        </div>
-        
-        <div class="bg-white p-4 rounded-lg shadow">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-gray-500 font-medium">Nilai Tertinggi</h3>
-            <span class="stat-badge subject-max">
-              <i class="fas fa-arrow-up mr-1"></i> MAX
-            </span>
-          </div>
-          <div class="text-2xl md:text-3xl font-bold text-blue-600">${max}</div>
-          <div class="text-sm text-gray-500 mt-2">Pencapaian terbaik</div>
-        </div>
-        
-        <div class="bg-white p-4 rounded-lg shadow">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-gray-500 font-medium">Nilai Terendah</h3>
-            <span class="stat-badge subject-min">
-              <i class="fas fa-arrow-down mr-1"></i> MIN
-            </span>
-          </div>
-          <div class="text-2xl md:text-3xl font-bold text-red-600">${min}</div>
-          <div class="text-sm text-gray-500 mt-2">Perlu perhatian</div>
-        </div>
-        
-        <div class="bg-white p-4 rounded-lg shadow">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-gray-500 font-medium">Total Peserta</h3>
-            <span class="stat-badge subject-students">
-              <i class="fas fa-user-graduate mr-1"></i> TOTAL
-            </span>
-          </div>
-          <div class="text-2xl md:text-3xl font-bold text-green-600">${totalStudents}</div>
-          <div class="text-sm text-gray-500 mt-2">Jumlah peserta ujian</div>
-        </div>
-      `;
-      
-      // Show subject stats section
-      document.getElementById('subjectStats').style.display = 'block';
-    }
-
-    function updateClassStatistics(data, kelas) {
-      const classStatsContainer = document.getElementById('classStats');
-      const selectedClassTitle = document.getElementById('selectedClassTitle');
-      
-      selectedClassTitle.textContent = `Kelas ${kelas}`;
-      
-      // Calculate statistics
-      const nilaiArray = data.map(item => parseFloat(item.nilai)).filter(n => !isNaN(n));
-      const avg = nilaiArray.length > 0 ? (nilaiArray.reduce((a, b) => a + b, 0) / nilaiArray.length).toFixed(2) : 0;
-      const max = nilaiArray.length > 0 ? Math.max(...nilaiArray).toFixed(2) : 0;
-      const min = nilaiArray.length > 0 ? Math.min(...nilaiArray).toFixed(2) : 0;
-      
-      classStatsContainer.innerHTML = `
-        <div class="bg-white p-4 rounded-lg shadow">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-gray-500 font-medium">Rata-rata Nilai</h3>
-            <span class="stat-badge avg">
-              <i class="fas fa-calculator mr-1"></i> AVG
-            </span>
-          </div>
-          <div class="text-2xl md:text-3xl font-bold text-blue-600">${avg}</div>
-          <div class="text-sm text-gray-500 mt-2">Dari ${nilaiArray.length} peserta</div>
-        </div>
-        
-        <div class="bg-white p-4 rounded-lg shadow">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-gray-500 font-medium">Nilai Tertinggi</h3>
-            <span class="stat-badge max">
-              <i class="fas fa-arrow-up mr-1"></i> MAX
-            </span>
-          </div>
-          <div class="text-2xl md:text-3xl font-bold text-green-600">${max}</div>
-          <div class="text-sm text-gray-500 mt-2">Pencapaian terbaik</div>
-        </div>
-        
-        <div class="bg-white p-4 rounded-lg shadow">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-gray-500 font-medium">Nilai Terendah</h3>
-            <span class="stat-badge min">
-              <i class="fas fa-arrow-down mr-1"></i> MIN
-            </span>
-          </div>
-          <div class="text-2xl md:text-3xl font-bold text-red-600">${min}</div>
-          <div class="text-sm text-gray-500 mt-2">Perlu perhatian</div>
-        </div>
-      `;
-    }
-
-    function updateTotalParticipants(data) {
-      const ruanganCount = {};
-      const ruanganStats = document.getElementById('ruanganStats');
-      ruanganStats.innerHTML = '';
-
-      data.forEach(item => {
-        if (!ruanganCount[item.ruangan]) {
-          ruanganCount[item.ruangan] = 0;
-        }
-        ruanganCount[item.ruangan]++;
-      });
-
-      // Sort rooms numerically
-      const sortedRooms = Object.keys(ruanganCount).sort((a, b) => {
-        const numA = parseInt(a.replace(/\D/g, ''));
-        const numB = parseInt(b.replace(/\D/g, ''));
-        return numA - numB;
-      });
-
-      sortedRooms.forEach(ruangan => {
-        const totalPeserta = ruanganCount[ruangan];
-        const target = ruangan.includes('15') ? 10 : 20; // Assuming Ruang 15 has target 10
-        
-        const statCard = document.createElement('div');
-        statCard.className = `stat-card bg-white rounded-lg shadow p-3 md:p-4 hover:shadow-md transition-all ${
-          selectedRuangan === ruangan ? 'active border-blue-500' : ''
-        }`;
-        
-        const roomName = document.createElement('h3');
-        roomName.className = 'text-base md:text-lg font-semibold text-gray-800 mb-2 flex items-center';
-        
-        const roomIcon = document.createElement('div');
-        roomIcon.className = 'bg-blue-100 text-blue-600 p-1 md:p-2 rounded-full mr-2 md:mr-3';
-        roomIcon.innerHTML = '<i class="fas fa-door-open text-xs md:text-sm"></i>';
-        
-        roomName.appendChild(roomIcon);
-        roomName.appendChild(document.createTextNode(ruangan));
-        
-        const participantCount = document.createElement('p');
-        participantCount.className = 'text-xl md:text-3xl font-bold my-2 md:my-3 text-center';
-        participantCount.textContent = totalPeserta;
-        
-        const targetInfo = document.createElement('div');
-        targetInfo.className = 'flex justify-between text-xs md:text-sm mb-1 md:mb-2';
-        targetInfo.innerHTML = `
-          <span class="text-gray-600">Target:</span>
-          <span class="font-medium">${target}</span>
-        `;
-        
-        const progressContainer = document.createElement('div');
-        progressContainer.className = 'mb-1';
-        
-        const progressText = document.createElement('div');
-        progressText.className = 'flex justify-between text-xs text-gray-500 mb-1';
-        progressText.innerHTML = `
-          <span>${Math.round((totalPeserta / target) * 100)}%</span>
-          <span>${totalPeserta}/${target}</span>
-        `;
-        
-        const progressBar = document.createElement('div');
-        progressBar.className = 'w-full bg-gray-200 rounded-full h-2';
-        
-        const progressValue = document.createElement('div');
-        progressValue.className = `progress-value h-2 rounded-full ${
-          (totalPeserta / target) >= 1 ? 'bg-green-500' : 
-          (totalPeserta / target) >= 0.8 ? 'bg-blue-500' : 
-          (totalPeserta / target) >= 0.5 ? 'bg yellow-500' : 'bg-red-500'
-        }`;
-        progressValue.style.width = `${Math.min((totalPeserta / target) * 100, 100)}%`;
-        
-        progressBar.appendChild(progressValue);
-        progressContainer.appendChild(progressText);
-        progressContainer.appendChild(progressBar);
-        
-        statCard.appendChild(roomName);
-        statCard.appendChild(participantCount);
-        statCard.appendChild(targetInfo);
-        statCard.appendChild(progressContainer);
-        
-        ruanganStats.appendChild(statCard);
-      });
-
-      // Show the total participants section after selecting a room
-      document.getElementById('totalParticipants').style.display = 'block';
-    }
-
-    function searchTable() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const rows = document.querySelectorAll('#rekapTable tbody tr');
-
-      let visibleCount = 0;
-      rows.forEach(row => {
-        const nama = row.cells[2].textContent.toLowerCase();
-        if (nama.includes(input)) {
-          row.style.display = '';
-          visibleCount++;
-        } else {
-          row.style.display = 'none';
-        }
-      });
-
-      // Update result count
-      document.getElementById('resultCount').textContent = `${visibleCount} hasil ditemukan`;
-    }
-
-    function exportClassToExcel() {
-      if (!selectedMapel || !selectedKelas) {
-        alert('Silakan pilih mata pelajaran dan kelas terlebih dahulu');
-        return;
-      }
-      
-      // Prepare data for export
-      const exportData = allData.filter(item => 
-        item.mapel === selectedMapel && 
-        item.kelas === selectedKelas &&
-        item.nama && item.nama !== '#N/A'
-      );
-      
-      // Calculate statistics
-      const nilaiArray = exportData.map(item => parseFloat(item.nilai)).filter(n => !isNaN(n));
-      const avg = nilaiArray.length > 0 ? (nilaiArray.reduce((a, b) => a + b, 0) / nilaiArray.length).toFixed(2) : 0;
-      const max = nilaiArray.length > 0 ? Math.max(...nilaiArray).toFixed(2) : 0;
-      const min = nilaiArray.length > 0 ? Math.min(...nilaiArray).toFixed(2) : 0;
-      
-      // Format data for Excel
-      const formattedData = exportData.map(item => ({
-        'Kelas': item.kelas,
-        'Nama': item.nama,
-        'Mata Pelajaran': item.mapel,
-        'Nilai': item.nilai
-      }));
-      
-      // Add statistics row
-      formattedData.push({}, {
-        'Kelas': 'STATISTIK',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': ''
-      }, {
-        'Kelas': 'Rata-rata',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': avg
-      }, {
-        'Kelas': 'Nilai Tertinggi',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': max
-      }, {
-        'Kelas': 'Nilai Terendah',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': min
+      // Remove active class from all buttons
+      document.querySelectorAll('#ruanganButtonsContainer button').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-blue-100', 'text-blue-800');
       });
       
-      // Create worksheet
-      const ws = XLSX.utils.json_to_sheet(formattedData);
+      // Add active class to clicked button
+      button.classList.add('active');
+      button.classList.add('bg-blue-600', 'text-white');
+      button.classList.remove('bg-blue-100', 'text-blue-800');
       
-      // Create workbook
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, `Rekap ${selectedKelas}`);
-      
-      // Generate filename
-      const filename = `Rekap_${selectedMapel}_${selectedKelas}.xlsx`;
-      
-      // Export to Excel
-      XLSX.writeFile(wb, filename);
-    }
-
-    function exportSubjectToExcel() {
-      if (!selectedMapel) {
-        alert('Silakan pilih mata pelajaran terlebih dahulu');
-        return;
-      }
-      
-      // Prepare data for export
-      const exportData = allData.filter(item => 
-        item.mapel === selectedMapel &&
-        item.nama && item.nama !== '#N/A'
-      );
-      
-      // Calculate statistics
-      const nilaiArray = exportData.map(item => parseFloat(item.nilai)).filter(n => !isNaN(n));
-      const avg = nilaiArray.length > 0 ? (nilaiArray.reduce((a, b) => a + b, 0) / nilaiArray.length).toFixed(2) : 0;
-      const max = nilaiArray.length > 0 ? Math.max(...nilaiArray).toFixed(2) : 0;
-      const min = nilaiArray.length > 0 ? Math.min(...nilaiArray).toFixed(2) : 0;
-      const totalStudents = exportData.length;
-      
-      // Format data for Excel
-      const formattedData = exportData.map(item => ({
-        'Ruangan': item.ruangan,
-        'Kelas': item.kelas,
-        'Nama': item.nama,
-        'Mata Pelajaran': item.mapel,
-        'Nilai': item.nilai
-      }));
-      
-      // Add statistics row
-      formattedData.push({}, {
-        'Ruangan': 'STATISTIK',
-        'Kelas': '',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': ''
-      }, {
-        'Ruangan': 'Rata-rata',
-        'Kelas': '',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': avg
-      }, {
-        'Ruangan': 'Nilai Tertinggi',
-        'Kelas': '',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': max
-      }, {
-        'Ruangan': 'Nilai Terendah',
-        'Kelas': '',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': min
-      }, {
-        'Ruangan': 'Total Peserta',
-        'Kelas': '',
-        'Nama': '',
-        'Mata Pelajaran': '',
-        'Nilai': totalStudents
-      });
-      
-      // Create worksheet
-      const ws = XLSX.utils.json_to_sheet(formattedData);
-      
-      // Create workbook
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, `Rekap ${selectedMapel}`);
-      
-      // Generate filename
-      const filename = `Rekap_${selectedMapel}.xlsx`;
-      
-      // Export to Excel
-      XLSX.writeFile(wb, filename);
-    }
-
-    window.onload = () => {
-      getDataFromSheet();
-
-      setInterval(() => {
-        getDataFromSheet();
-      }, 300000); // 5 menit = 300000 ms
+      selectedRuangan = ruangan;
+      filterByRuangan(ruangan, data);
     };
+    ruanganButtonsContainer.appendChild(button);
+  });
+}
+
+function createClassButtons(data) {
+  const classSet = new Set();
+  data.forEach(item => {
+    if (item.kelas && item.kelas !== '#N/A') {
+      classSet.add(item.kelas);
+    }
+  });
+
+  const classSelectorGroup = document.getElementById('classSelectorGroup');
+  const classButtonsContainer = document.getElementById('classButtonsContainer');
+  classSelectorGroup.style.display = 'block';
+  classButtonsContainer.innerHTML = '';
+
+  // Sort classes numerically (VII A, VII B, VIII A, etc.)
+  const sortedClasses = Array.from(classSet).sort((a, b) => {
+    // Extract grade and class letter
+    const gradeA = parseInt(a.split(' ')[0].replace(/\D/g, ''));
+    const gradeB = parseInt(b.split(' ')[0].replace(/\D/g, ''));
+    if (gradeA !== gradeB) return gradeA - gradeB;
+    return a.localeCompare(b);
+  });
+
+  sortedClasses.forEach(kelas => {
+    const button = document.createElement('button');
+    button.className = 'class-selector-btn bg-gray-100 text-gray-800 px-2 py-1 md:px-3 md:py-1 rounded-lg hover:bg-gray-200 hover:shadow-md transition-all';
+    button.textContent = kelas;
+    button.onclick = () => {
+      // Remove active class from all buttons
+      document.querySelectorAll('#classButtonsContainer button').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-800');
+      });
+      
+      // Add active class to clicked button
+      button.classList.add('active');
+      button.classList.add('bg-blue-600', 'text-white');
+      button.classList.remove('bg-gray-100', 'text-gray-800');
+      
+      selectedKelas = kelas;
+      filterByClass(kelas, data);
+    };
+    classButtonsContainer.appendChild(button);
+  });
+}
+
+function filterByRuangan(ruangan, data) {
+  const filteredData = data.filter(item => item.ruangan === ruangan && item.nama && item.nama !== '#N/A');
+  filteredData.sort((a, b) => {
+    if (a.kelas !== b.kelas) return a.kelas.localeCompare(b.kelas);
+    return a.nama.localeCompare(b.nama);
+  });
+  tampilkanTabel(filteredData);
+  updateTotalParticipants(filteredData);
+  document.getElementById('classReport').style.display = 'none';
+}
+
+function filterByClass(kelas, data) {
+  const filteredData = data.filter(item => item.kelas === kelas && item.nama && item.nama !== '#N/A');
+  filteredData.sort((a, b) => a.nama.localeCompare(b.nama));
+  tampilkanTabel(filteredData);
+  updateClassStatistics(filteredData, kelas);
+  document.getElementById('totalParticipants').style.display = 'none';
+  document.getElementById('classReport').style.display = 'block';
+}
+
+function updateSubjectStatistics(data, mapel) {
+  const subjectStatsContainer = document.getElementById('subjectStatsContainer');
+  const selectedSubjectTitle = document.getElementById('selectedSubjectTitle');
+  
+  selectedSubjectTitle.textContent = mapel;
+  
+  // Filter data for selected subject
+  const subjectData = data.filter(item => item.mapel === mapel && item.nama && item.nama !== '#N/A' && item.nilai && item.nilai !== '#N/A');
+  
+  // Calculate statistics
+  const totalStudents = subjectData.length;
+  const nilaiArray = subjectData.map(item => parseFloat(item.nilai)).filter(n => !isNaN(n));
+  const avg = nilaiArray.length > 0 ? (nilaiArray.reduce((a, b) => a + b, 0) / nilaiArray.length).toFixed(2) : 0;
+  const max = nilaiArray.length > 0 ? Math.max(...nilaiArray).toFixed(2) : 0;
+  const min = nilaiArray.length > 0 ? Math.min(...nilaiArray).toFixed(2) : 0;
+  
+  subjectStatsContainer.innerHTML = `
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-gray-500 font-medium">Rata-rata Nilai</h3>
+        <span class="stat-badge subject-avg">
+          <i class="fas fa-calculator mr-1"></i> AVG
+        </span>
+      </div>
+      <div class="text-2xl md:text-3xl font-bold text-purple-600">${avg}</div>
+      <div class="text-sm text-gray-500 mt-2">Nilai rata-rata mapel</div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-gray-500 font-medium">Nilai Tertinggi</h3>
+        <span class="stat-badge subject-max">
+          <i class="fas fa-arrow-up mr-1"></i> MAX
+        </span>
+      </div>
+      <div class="text-2xl md:text-3xl font-bold text-blue-600">${max}</div>
+      <div class="text-sm text-gray-500 mt-2">Pencapaian terbaik</div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-gray-500 font-medium">Nilai Terendah</h3>
+        <span class="stat-badge subject-min">
+          <i class="fas fa-arrow-down mr-1"></i> MIN
+        </span>
+      </div>
+      <div class="text-2xl md:text-3xl font-bold text-red-600">${min}</div>
+      <div class="text-sm text-gray-500 mt-2">Perlu perhatian</div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-gray-500 font-medium">Total Peserta</h3>
+        <span class="stat-badge subject-students">
+          <i class="fas fa-user-graduate mr-1"></i> TOTAL
+        </span>
+      </div>
+      <div class="text-2xl md:text-3xl font-bold text-green-600">${totalStudents}</div>
+      <div class="text-sm text-gray-500 mt-2">Jumlah peserta ujian</div>
+    </div>
+  `;
+  
+  // Show subject stats section
+  document.getElementById('subjectStats').style.display = 'block';
+}
+
+function updateClassStatistics(data, kelas) {
+  const classStatsContainer = document.getElementById('classStats');
+  const selectedClassTitle = document.getElementById('selectedClassTitle');
+  
+  selectedClassTitle.textContent = `Kelas ${kelas}`;
+  
+  // Calculate statistics
+  const nilaiArray = data.map(item => parseFloat(item.nilai)).filter(n => !isNaN(n));
+  const avg = nilaiArray.length > 0 ? (nilaiArray.reduce((a, b) => a + b, 0) / nilaiArray.length).toFixed(2) : 0;
+  const max = nilaiArray.length > 0 ? Math.max(...nilaiArray).toFixed(2) : 0;
+  const min = nilaiArray.length > 0 ? Math.min(...nilaiArray).toFixed(2) : 0;
+  
+  classStatsContainer.innerHTML = `
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-gray-500 font-medium">Rata-rata Nilai</h3>
+        <span class="stat-badge avg">
+          <i class="fas fa-calculator mr-1"></i> AVG
+        </span>
+      </div>
+      <div class="text-2xl md:text-3xl font-bold text-blue-600">${avg}</div>
+      <div class="text-sm text-gray-500 mt-2">Dari ${nilaiArray.length} peserta</div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-gray-500 font-medium">Nilai Tertinggi</h3>
+        <span class="stat-badge max">
+          <i class="fas fa-arrow-up mr-1"></i> MAX
+        </span>
+      </div>
+      <div class="text-2xl md:text-3xl font-bold text-green-600">${max}</div>
+      <div class="text-sm text-gray-500 mt-2">Pencapaian terbaik</div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-gray-500 font-medium">Nilai Terendah</h3>
+        <span class="stat-badge min">
+          <i class="fas fa-arrow-down mr-1"></i> MIN
+        </span>
+      </div>
+      <div class="text-2xl md:text-3xl font-bold text-red-600">${min}</div>
+      <div class="text-sm text-gray-500 mt-2">Perlu perhatian</div>
+    </div>
+  `;
+}
+
+function updateTotalParticipants(data) {
+  const ruanganCount = {};
+  const ruanganStats = document.getElementById('ruanganStats');
+  ruanganStats.innerHTML = '';
+
+  data.forEach(item => {
+    if (!ruanganCount[item.ruangan]) {
+      ruanganCount[item.ruangan] = 0;
+    }
+    ruanganCount[item.ruangan]++;
+  });
+
+  // Sort rooms numerically
+  const sortedRooms = Object.keys(ruanganCount).sort((a, b) => {
+    const numA = parseInt(a.replace(/\D/g, ''));
+    const numB = parseInt(b.replace(/\D/g, ''));
+    return numA - numB;
+  });
+
+  sortedRooms.forEach(ruangan => {
+    const totalPeserta = ruanganCount[ruangan];
+    const target = ruangan.includes('15') ? 10 : 20; // Assuming Ruang 15 has target 10
+    
+    const statCard = document.createElement('div');
+    statCard.className = `stat-card bg-white rounded-lg shadow p-3 md:p-4 hover:shadow-md transition-all ${
+      selectedRuangan === ruangan ? 'active border-blue-500' : ''
+    }`;
+    
+    const roomName = document.createElement('h3');
+    roomName.className = 'text-base md:text-lg font-semibold text-gray-800 mb-2 flex items-center';
+    
+    const roomIcon = document.createElement('div');
+    roomIcon.className = 'bg-blue-100 text-blue-600 p-1 md:p-2 rounded-full mr-2 md:mr-3';
+    roomIcon.innerHTML = '<i class="fas fa-door-open text-xs md:text-sm"></i>';
+    
+    roomName.appendChild(roomIcon);
+    roomName.appendChild(document.createTextNode(ruangan));
+    
+    const participantCount = document.createElement('p');
+    participantCount.className = 'text-xl md:text-3xl font-bold my-2 md:my-3 text-center';
+    participantCount.textContent = totalPeserta;
+    
+    const targetInfo = document.createElement('div');
+    targetInfo.className = 'flex justify-between text-xs md:text-sm mb-1 md:mb-2';
+    targetInfo.innerHTML = `
+      <span class="text-gray-600">Target:</span>
+      <span class="font-medium">${target}</span>
+    `;
+    
+    const progressContainer = document.createElement('div');
+    progressContainer.className = 'mb-1';
+    
+    const progressText = document.createElement('div');
+    progressText.className = 'flex justify-between text-xs text-gray-500 mb-1';
+    progressText.innerHTML = `
+      <span>${Math.round((totalPeserta / target) * 100)}%</span>
+      <span>${totalPeserta}/${target}</span>
+    `;
+    
+    const progressBar = document.createElement('div');
+    progressBar.className = 'w-full bg-gray-200 rounded-full h-2';
+    
+    const progressValue = document.createElement('div');
+    progressValue.className = `progress-value h-2 rounded-full ${
+      (totalPeserta / target) >= 1 ? 'bg-green-500' : 
+      (totalPeserta / target) >= 0.8 ? 'bg-blue-500' : 
+      (totalPeserta / target) >= 0.5 ? 'bg yellow-500' : 'bg-red-500'
+    }`;
+    progressValue.style.width = `${Math.min((totalPeserta / target) * 100, 100)}%`;
+    
+    progressBar.appendChild(progressValue);
+    progressContainer.appendChild(progressText);
+    progressContainer.appendChild(progressBar);
+    
+    statCard.appendChild(roomName);
+    statCard.appendChild(participantCount);
+    statCard.appendChild(targetInfo);
+    statCard.appendChild(progressContainer);
+    
+    ruanganStats.appendChild(statCard);
+  });
+
+  // Show the total participants section after selecting a room
+  document.getElementById('totalParticipants').style.display = 'block';
+}
+
+function searchTable() {
+  const input = document.getElementById('searchInput').value.toLowerCase();
+  const rows = document.querySelectorAll('#rekapTable tbody tr');
+
+  let visibleCount = 0;
+  rows.forEach(row => {
+    const nama = row.cells[2].textContent.toLowerCase();
+    if (nama.includes(input)) {
+      row.style.display = '';
+      visibleCount++;
+    } else {
+      row.style.display = 'none';
+    }
+  });
+
+  // Update result count
+  document.getElementById('resultCount').textContent = `${visibleCount} hasil ditemukan`;
+}
+
+function exportClassToExcel() {
+  if (!selectedMapel || !selectedKelas) {
+    alert('Silakan pilih mata pelajaran dan kelas terlebih dahulu');
+    return;
+  }
+  
+  // Prepare data for export
+  const exportData = allData.filter(item => 
+    item.mapel === selectedMapel && 
+    item.kelas === selectedKelas &&
+    item.nama && item.nama !== '#N/A'
+  );
+  
+  // Calculate statistics
+  const nilaiArray = exportData.map(item => parseFloat(item.nilai)).filter(n => !isNaN(n));
+  const avg = nilaiArray.length > 0 ? (nilaiArray.reduce((a, b) => a + b, 0) / nilaiArray.length).toFixed(2) : 0;
+  const max = nilaiArray.length > 0 ? Math.max(...nilaiArray).toFixed(2) : 0;
+  const min = nilaiArray.length > 0 ? Math.min(...nilaiArray).toFixed(2) : 0;
+  
+  // Format data for Excel
+  const formattedData = exportData.map(item => ({
+    'Kelas': item.kelas,
+    'Nama': item.nama,
+    'Mata Pelajaran': item.mapel,
+    'Nilai': item.nilai
+  }));
+  
+  // Add statistics row
+  formattedData.push({}, {
+    'Kelas': 'STATISTIK',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': ''
+  }, {
+    'Kelas': 'Rata-rata',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': avg
+  }, {
+    'Kelas': 'Nilai Tertinggi',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': max
+  }, {
+    'Kelas': 'Nilai Terendah',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': min
+  });
+  
+  // Create worksheet
+  const ws = XLSX.utils.json_to_sheet(formattedData);
+  
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, `Rekap ${selectedKelas}`);
+  
+  // Generate filename
+  const filename = `Rekap_${selectedMapel}_${selectedKelas}.xlsx`;
+  
+  // Export to Excel
+  XLSX.writeFile(wb, filename);
+}
+
+function exportSubjectToExcel() {
+  if (!selectedMapel) {
+    alert('Silakan pilih mata pelajaran terlebih dahulu');
+    return;
+  }
+  
+  // Prepare data for export
+  const exportData = allData.filter(item => 
+    item.mapel === selectedMapel &&
+    item.nama && item.nama !== '#N/A'
+  );
+  
+  // Calculate statistics
+  const nilaiArray = exportData.map(item => parseFloat(item.nilai)).filter(n => !isNaN(n));
+  const avg = nilaiArray.length > 0 ? (nilaiArray.reduce((a, b) => a + b, 0) / nilaiArray.length).toFixed(2) : 0;
+  const max = nilaiArray.length > 0 ? Math.max(...nilaiArray).toFixed(2) : 0;
+  const min = nilaiArray.length > 0 ? Math.min(...nilaiArray).toFixed(2) : 0;
+  const totalStudents = exportData.length;
+  
+  // Format data for Excel
+  const formattedData = exportData.map(item => ({
+    'Ruangan': item.ruangan,
+    'Kelas': item.kelas,
+    'Nama': item.nama,
+    'Mata Pelajaran': item.mapel,
+    'Nilai': item.nilai
+  }));
+  
+  // Add statistics row
+  formattedData.push({}, {
+    'Ruangan': 'STATISTIK',
+    'Kelas': '',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': ''
+  }, {
+    'Ruangan': 'Rata-rata',
+    'Kelas': '',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': avg
+  }, {
+    'Ruangan': 'Nilai Tertinggi',
+    'Kelas': '',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': max
+  }, {
+    'Ruangan': 'Nilai Terendah',
+    'Kelas': '',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': min
+  }, {
+    'Ruangan': 'Total Peserta',
+    'Kelas': '',
+    'Nama': '',
+    'Mata Pelajaran': '',
+    'Nilai': totalStudents
+  });
+  
+  // Create worksheet
+  const ws = XLSX.utils.json_to_sheet(formattedData);
+  
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, `Rekap ${selectedMapel}`);
+  
+  // Generate filename
+  const filename = `Rekap_${selectedMapel}.xlsx`;
+  
+  // Export to Excel
+  XLSX.writeFile(wb, filename);
+}
+
+window.onload = () => {
+  getDataFromSheet();
+
+  setInterval(() => {
+    getDataFromSheet();
+  }, 300000); // 5 menit = 300000 ms
+};
   </script>
 </body>
-</html> 
+</html>
